@@ -6,7 +6,7 @@
 #    By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/12 10:48:22 by tzanchi           #+#    #+#              #
-#    Updated: 2023/08/16 22:38:21 by tzanchi          ###   ########.fr        #
+#    Updated: 2023/08/17 18:32:09 by tzanchi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,12 +34,15 @@ BOLD		=	\033[1m
 FLASH		=	\033[5m
 TICK		=	✓
 
-SRC			=	
+CLIENT_SRC	=	client.c
+SERVER_SRC	=	server.c
 
-SRCS		=	$(addprefix ${SRCS_DIR}, ${SRC})
+CLIENT_SRCS	=	$(addprefix ${SRCS_DIR}, ${CLIENT_SRC})
+SERVER_SRCS	=	$(addprefix ${SRCS_DIR}, ${SERVER_SRC})
 SRC_NR		=	$(words ${SRCS})
 
-OBJS		=	$(addprefix ${OBJ_DIR}/, $(notdir $(SRCS:.c=.o)))
+CLIENT_OBJS	=	$(addprefix ${OBJ_DIR}/, $(notdir $(CLIENT_SRCS:.c=.o)))
+SERVER_OBJS	=	$(addprefix ${OBJ_DIR}/, $(notdir $(SERVER_SRCS:.c=.o)))
 
 all:			project_logo ${OBJ_DIR}
 				@make -s ${LIBFT}
@@ -56,9 +59,12 @@ ${LIBFT}:
 				@echo "${YELLOW}Moving ${LIBFT} at the root of the repository${NC}"
 				@mv ${LIBFT_DIR}/${LIBFT} .
 
-${NAME}:		entry_message ${OBJS}
-				@${CC} ${CFLAGS} ${SRCS} -I${HEAD_DIR} ${LIBFT} -o ${NAME}
-				@echo "${YELLOW}\nCompilation complete, ${NAME} executable at the root of the directory${NC}\n"
+${SERVER}:		entry_message ${SERVER_OBJS}
+				@${CC} ${CFLAGS} ${SERVER_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${SERVER}
+
+${CLIENT}:		${CLIENT_OBJS}
+				@${CC} ${CFLAGS} ${CLIENT_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${CLIENT}
+				@echo "${FLASH}${YELLOW}\nCompilation complete, ${CLIENT} and ${SERVER} executable at the root of the directory${NC}\n"
 
 ${OBJ_DIR}:
 				@if [ ! -d "${OBJ_DIR}" ]; \
@@ -91,6 +97,6 @@ project_logo:
 				@echo "${RED}   _     _     _     _     _     _     _     _  \n  / \   / \   / \   / \   / \   / \   / \   / \ \n ( ${FLASH}${CYAN}m${NC}${RED} ) ( ${FLASH}${CYAN}i${NC}${RED} ) ( ${FLASH}${CYAN}n${NC}${RED} ) ( ${FLASH}${CYAN}i${NC}${RED} ) ( ${FLASH}${CYAN}t${NC}${RED} ) ( ${FLASH}${CYAN}a${NC}${RED} ) ( ${FLASH}${CYAN}l${NC}${RED} ) ( ${FLASH}${CYAN}k${NC}${RED} )\n  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/    ${NC}a 42 project by Théo Zanchi"
 
 entry_message:
-				@echo "${CYAN}\nCOMPILING $$(echo ${NAME} | tr '[:lower:]' '[:upper:]')\n${NC}${BOLD}Compiling necessary .o files out of ${SRC_NR} .c files in total${NC}"
+				@echo "${CYAN}\nCOMPILING $$(echo ${SERVER} | tr '[:lower:]' '[:upper:]') and $$(echo ${CLIENT} | tr '[:lower:]' '[:upper:]')\n${NC}${BOLD}Compiling necessary .o files out of ${SRC_NR} .c files in total${NC}"
 
 .PHONY:			all clean fclean re project_logo entry_message
