@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 11:56:47 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 14:58:13 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,5 @@ typedef enum e_bool
 	FALSE,
 	TRUE
 }	t_bool;
-
-typedef struct s_str_info
-{
-	char	*str;
-	int		str_size;
-	int		str_capacity;
-}	t_str_info;
 
 #endif 

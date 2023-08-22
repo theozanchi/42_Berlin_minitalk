@@ -6,69 +6,95 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 12:11:19 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 17:23:55 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static t_str_info	str_info = {NULL, 0, 1};
+/*Adds the character 'c' at the end of the string pointed by 'str'. If 'str' is
+not big enough to receive the new character, memory is reallocated to increase
+the capacity of 'str' by BLOCK_SIZE
+add_char_to_str ensures that 'str' is NULL terminated*/
+void	add_char_to_str(char c, char **str)
+{
+	static int	capacity = BLOCK_SIZE;
+	static int	size = 0;
+	char		*new_str;
 
-void	action(int signum)
+	if (!(*str))
+	{
+		*str = (char *)malloc(capacity * sizeof(char));
+		if (!(*str))
+			exit(ft_printf("%s", ERR_MALLOC));
+	}
+	if (size + 2 > capacity)
+	{
+		capacity += BLOCK_SIZE;
+		new_str = (char *)malloc(capacity * sizeof(char));
+		if (!new_str)
+			exit(ft_printf("%s", ERR_MALLOC));
+		ft_memmove(new_str, *str, size);
+		new_str[size - 1] = '\0';
+		free(*str);
+		*str = new_str;
+	}
+	(*str)[size] = c;
+	(*str)[++size] = '\0';
+}
+
+/*Functions checks that only SIGUSR1 and SIGUSR2 are processed by the server.
+It accumulates bits received by the client in a buffer int before storing each
+byte in a static char * 'message'
+Once a NULL terninator is received by the client, 'message' is displayed on the
+standard output and memory is properly freed*/
+void	handle_sigusr(int signum, siginfo_t *info, void *context)
 {
 	static int	buffer = 0;
 	static int	bits_received = 0;
-	char		*new_str;
+	static int	pid = 0;
+	static char	*message = NULL;
 
+	(void)context;
+	if (info->si_pid)
+		pid = info->si_pid;
 	if (signum != SIGUSR1 && signum != SIGUSR2)
 		return ;
 	buffer = (buffer << 1 | (signum == SIGUSR2));
-	bits_received++;
-	ft_printf("%s\n", bits_received);
-	if (bits_received == 8)
+	if (++bits_received == 8)
 	{
-		if ((char)buffer == 4)
+		if ((char)buffer != '\0')
+			add_char_to_str((char)buffer, &message);
+		else
 		{
-			ft_printf("%s\n", str_info.str);
-			free(str_info.str);
-			str_info.str = NULL;
-			str_info.str_size = 0;
-			str_info.str_capacity = 1;
-			return ;
+			ft_printf("%s\n", message);
+			free(message);
+			message = NULL;
 		}
-		if (str_info.str_capacity < str_info.str_size + 1)
-		{
-			str_info.str_capacity += BLOCK_SIZE;
-			new_str = malloc(str_info.str_capacity * sizeof(char));
-			if (!new_str)
-			{
-				ft_printf("%s", ERR_MALLOC);
-				return ;
-			}
-			if (str_info.str)
-			{
-				ft_memmove(new_str, str_info.str, str_info.str_size);
-				free(str_info.str);
-			}
-			str_info.str = new_str;
-		}
-		str_info.str[str_info.str_size] = (char)buffer;
-		str_info.str_size++;
-		str_info.str[++str_info.str_size] = '\0';
 		buffer = 0;
 		bits_received = 0;
 	}
 }
 
+/*Displays the PID of the server once it is launched and then waits for SIGUSR1
+and SIGUSR2 from the client to display the encoded message*/
 int	main(void)
 {
-	struct sigaction	s_sigaction;
+	struct sigaction	sa;
+	sigset_t			block_mask;
 
-	s_sigaction.sa_handler = action;
-	s_sigaction.sa_flags = 0;
+	sigemptyset(&block_mask);
+	sigaddset(&block_mask, SIGINT);
+	sigaddset(&block_mask, SIGQUIT);
+	sa.sa_handler = 0;
+	sa.sa_flags = SA_SIGINFO;
+	sa.sa_mask = block_mask;
+	sa.sa_sigaction = handle_sigusr;
+	ft_printf("\033[1;33m");
 	ft_printf("Server PID: %i\n\n", getpid());
-	sigaction(SIGUSR1, &s_sigaction, NULL);
-	sigaction(SIGUSR2, &s_sigaction, NULL);
+	ft_printf("\033[0m");
+	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
 		pause();
 }

@@ -6,12 +6,16 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 11:56:21 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 17:05:15 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
+/*Checks that the arguments of the program are valid:
+• Two arguments to the 'client' program
+• First argument is numeric (PID of the 'server')
+• Second argument is a not empty string*/
 t_bool	argument_is_valid(int argc, char **argv)
 {
 	int	i;
@@ -38,16 +42,22 @@ t_bool	argument_is_valid(int argc, char **argv)
 	return (TRUE);
 }
 
+/*Sends a bit encoded message to the server whose PID is 'pid' with SIGUSR1 to
+represent 0 and SIGUSR2 to represent 1
+Once the message is sent, 11111111 (bit representation of the NULL terminator) is
+sent to the server to indicate message is over*/
 void	send_message(int pid, char *str)
 {
-	int	i;
+	int		i;
+	char	c;
 
 	while (*str)
 	{
 		i = 8;
+		c = *str++;
 		while (i--)
 		{
-			if (*str++ >> i & 1)
+			if (c >> i & 1)
 				kill(pid, SIGUSR2);
 			else
 				kill(pid, SIGUSR1);
@@ -57,14 +67,12 @@ void	send_message(int pid, char *str)
 	i = 8;
 	while (i--)
 	{
-		if (4 >> i & 1)
-			kill(pid, SIGUSR2);
-		else
-			kill(pid, SIGUSR1);
+		kill(pid, SIGUSR1);
 		usleep(100);
 	}
 }
 
+/*Checks that the program arguments are valids and sends message to the server*/
 int	main(int argc, char **argv)
 {
 	if (!argument_is_valid(argc, argv))
