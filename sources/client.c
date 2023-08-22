@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 18:52:46 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 18:57:32 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ void	send_message(int pid, char *str)
 	}
 }
 
+/*Displays a message from the client side to assess that the server did
+receive the message properly*/
 void	handle_sigusr(int signum)
 {
 	if (signum == SIGUSR1)
@@ -82,7 +84,8 @@ void	handle_sigusr(int signum)
 	}
 }
 
-/*Checks that the program arguments are valids and sends message to the server*/
+/*Checks that the program arguments are valids and sends message to the server.
+Expects a signal from the server once the message has been received*/
 int	main(int argc, char **argv)
 {
 	struct sigaction	sa;
