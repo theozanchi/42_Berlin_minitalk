@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 17:23:55 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 18:09:36 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	add_char_to_str(char c, char **str)
 
 	if (!(*str))
 	{
+		capacity = BLOCK_SIZE;
+		size = 0;
 		*str = (char *)malloc(capacity * sizeof(char));
 		if (!(*str))
 			exit(ft_printf("%s", ERR_MALLOC));
@@ -35,7 +37,6 @@ void	add_char_to_str(char c, char **str)
 		if (!new_str)
 			exit(ft_printf("%s", ERR_MALLOC));
 		ft_memmove(new_str, *str, size);
-		new_str[size - 1] = '\0';
 		free(*str);
 		*str = new_str;
 	}
