@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 17:05:15 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 18:52:46 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,26 @@ void	send_message(int pid, char *str)
 	}
 }
 
+void	handle_sigusr(int signum)
+{
+	if (signum == SIGUSR1)
+	{
+		ft_printf("\033[0;32m");
+		ft_printf("Message has been received by server");
+		ft_printf("\033[0m");
+	}
+}
+
 /*Checks that the program arguments are valids and sends message to the server*/
 int	main(int argc, char **argv)
 {
+	struct sigaction	sa;
+
 	if (!argument_is_valid(argc, argv))
 		return (1);
+	sa.sa_handler = handle_sigusr;
+	sigaction(SIGUSR1, &sa, NULL);
 	send_message(ft_atoi(argv[1]), argv[2]);
+	usleep(100);
+	return (0);
 }

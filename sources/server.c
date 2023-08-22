@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 18:09:36 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 18:49:08 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ void	handle_sigusr(int signum, siginfo_t *info, void *context)
 			ft_printf("%s\n", message);
 			free(message);
 			message = NULL;
+			kill(pid, SIGUSR1);
 		}
 		buffer = 0;
 		bits_received = 0;
