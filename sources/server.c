@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/21 18:33:56 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/22 12:11:19 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,13 @@ void	action(int signum)
 {
 	static int	buffer = 0;
 	static int	bits_received = 0;
-	char		*new_str = NULL;
+	char		*new_str;
 
 	if (signum != SIGUSR1 && signum != SIGUSR2)
 		return ;
 	buffer = (buffer << 1 | (signum == SIGUSR2));
 	bits_received++;
+	ft_printf("%s\n", bits_received);
 	if (bits_received == 8)
 	{
 		if ((char)buffer == 4)
@@ -51,7 +52,7 @@ void	action(int signum)
 			}
 			str_info.str = new_str;
 		}
-		new_str[str_info.str_size] = (char)buffer;
+		str_info.str[str_info.str_size] = (char)buffer;
 		str_info.str_size++;
 		str_info.str[++str_info.str_size] = '\0';
 		buffer = 0;
