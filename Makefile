@@ -6,7 +6,7 @@
 #    By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/12 10:48:22 by tzanchi           #+#    #+#              #
-#    Updated: 2023/08/22 14:58:39 by tzanchi          ###   ########.fr        #
+#    Updated: 2023/08/23 15:38:25 by tzanchi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,6 @@ LIBFT		=	libft.a
 SRCS_DIR	=	./sources/
 HEAD_DIR	=	./includes/
 LIBFT_DIR	=	./libft/
-MLX42_DIR	=	./MLX42/	str_info.str = malloc(2 * sizeof(char));
 
 OBJ_DIR		=	${SRCS_DIR}.o
 
@@ -32,7 +31,6 @@ YELLOW		=	\033[1;33m
 RED			=	\033[1;31m
 NC			=	\033[0m
 BOLD		=	\033[1m
-FLASH		=	\033[5m
 TICK		=	✓
 
 CLIENT_SRC	=	client.c
@@ -65,7 +63,7 @@ ${SERVER}:		entry_message ${SERVER_OBJS}
 
 ${CLIENT}:		${CLIENT_OBJS}
 				@${CC} ${CFLAGS} ${CLIENT_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${CLIENT}
-				@echo "${FLASH}${YELLOW}\nCompilation complete, ${CLIENT} and ${SERVER} executable at the root of the directory${NC}\n"
+				@echo "${YELLOW}\nCompilation complete, ${CLIENT} and ${SERVER} executable at the root of the directory${NC}\n"
 
 ${OBJ_DIR}:
 				@if [ ! -d "${OBJ_DIR}" ]; \
@@ -95,7 +93,7 @@ fclean:			clean
 re:				fclean all
 
 project_logo:
-				@echo "${RED}   _     _     _     _     _     _     _     _  \n  / \   / \   / \   / \   / \   / \   / \   / \ \n ( ${FLASH}${CYAN}m${NC}${RED} ) ( ${FLASH}${CYAN}i${NC}${RED} ) ( ${FLASH}${CYAN}n${NC}${RED} ) ( ${FLASH}${CYAN}i${NC}${RED} ) ( ${FLASH}${CYAN}t${NC}${RED} ) ( ${FLASH}${CYAN}a${NC}${RED} ) ( ${FLASH}${CYAN}l${NC}${RED} ) ( ${FLASH}${CYAN}k${NC}${RED} )\n  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/    ${NC}a 42 project by Théo Zanchi"
+				@echo "${RED}   _     _     _     _     _     _     _     _  \n  / \   / \   / \   / \   / \   / \   / \   / \ \n ( ${CYAN}m${NC}${RED} ) ( ${CYAN}i${NC}${RED} ) ( ${CYAN}n${NC}${RED} ) ( ${CYAN}i${NC}${RED} ) ( ${CYAN}t${NC}${RED} ) ( ${CYAN}a${NC}${RED} ) ( ${CYAN}l${NC}${RED} ) ( ${CYAN}k${NC}${RED} )\n  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/    ${NC}a 42 project by Théo Zanchi"
 
 entry_message:
 				@echo "${CYAN}\nCOMPILING $$(echo ${SERVER} | tr '[:lower:]' '[:upper:]') and $$(echo ${CLIENT} | tr '[:lower:]' '[:upper:]')\n${NC}${BOLD}Compiling necessary .o files out of ${SRC_NR} .c files in total${NC}"

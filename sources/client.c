@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/22 18:57:32 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/24 15:19:16 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_bool	argument_is_valid(int argc, char **argv)
 
 	if (argc != 3)
 	{
-		ft_printf("%s", ERR_ARG_NR);
+		ft_printf(ERR_ARG_NR);
 		return (FALSE);
 	}
 	i = 0;
@@ -30,13 +30,13 @@ t_bool	argument_is_valid(int argc, char **argv)
 	{
 		if (!ft_isdigit(argv[1][i++]))
 		{
-			ft_printf("%s", ERR_NON_NUM_PID);
+			ft_printf(ERR_NON_NUM_PID);
 			return (FALSE);
 		}
 	}
 	if (!ft_strlen(argv[2]))
 	{
-		ft_printf("%s", ERR_EMPT_STR);
+		ft_printf(ERR_EMPT_STR);
 		return (FALSE);
 	}
 	return (TRUE);
@@ -61,27 +61,30 @@ void	send_message(int pid, char *str)
 				kill(pid, SIGUSR2);
 			else
 				kill(pid, SIGUSR1);
-			usleep(100);
+			if (sleep(2) == 0)
+				exit(ft_printf_colour(RED_BOLD, TIME_OUT));
 		}
 	}
 	i = 8;
 	while (i--)
 	{
 		kill(pid, SIGUSR1);
-		usleep(100);
+		if (!sleep(2))
+			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
 	}
 }
 
 /*Displays a message from the client side to assess that the server did
 receive the message properly*/
-void	handle_sigusr(int signum)
+void	handle_sigusr_client(int signum)
 {
+	static int	bit_count = 0;
+
 	if (signum == SIGUSR1)
-	{
-		ft_printf("\033[0;32m");
-		ft_printf("Message has been received by server");
-		ft_printf("\033[0m");
-	}
+		bit_count++;
+	if (signum == SIGUSR2)
+		ft_printf_colour(GREEN_LIGHT,
+			"Done, %d characters received by server", bit_count / 8 - 1);
 }
 
 /*Checks that the program arguments are valids and sends message to the server.
@@ -92,9 +95,9 @@ int	main(int argc, char **argv)
 
 	if (!argument_is_valid(argc, argv))
 		return (1);
-	sa.sa_handler = handle_sigusr;
+	sa.sa_handler = handle_sigusr_client;
 	sigaction(SIGUSR1, &sa, NULL);
+	sigaction(SIGUSR2, &sa, NULL);
 	send_message(ft_atoi(argv[1]), argv[2]);
-	usleep(100);
 	return (0);
 }
