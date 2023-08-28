@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/24 15:10:40 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/28 16:07:48 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "../libft/libft.h"
 # include <signal.h>
-# include <time.h>
 
 /*errors*/
 # define ERR_ARG_NR "Wrong number of arguments\n"
@@ -26,12 +25,13 @@
 
 /*constants*/
 # ifndef BLOCK_SIZE
-#  define BLOCK_SIZE 1024
+#  define BLOCK_SIZE 2048
 # endif
 
 /*colours*/
 # define RED_BOLD "\033[1;31m"
 # define GREEN_LIGHT "\033[0;32m"
+# define YELLOW_BOLD "\033[1;33m"
 
 /*data_model*/
 typedef enum e_bool

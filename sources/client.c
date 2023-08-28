@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/24 15:19:16 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/28 16:21:34 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_bool	argument_is_valid(int argc, char **argv)
 
 	if (argc != 3)
 	{
-		ft_printf(ERR_ARG_NR);
+		ft_printf_colour(RED_BOLD, ERR_ARG_NR);
 		return (FALSE);
 	}
 	i = 0;
@@ -30,13 +30,13 @@ t_bool	argument_is_valid(int argc, char **argv)
 	{
 		if (!ft_isdigit(argv[1][i++]))
 		{
-			ft_printf(ERR_NON_NUM_PID);
+			ft_printf_colour(RED_BOLD, ERR_NON_NUM_PID);
 			return (FALSE);
 		}
 	}
 	if (!ft_strlen(argv[2]))
 	{
-		ft_printf(ERR_EMPT_STR);
+		ft_printf_colour(RED_BOLD, ERR_EMPT_STR);
 		return (FALSE);
 	}
 	return (TRUE);
@@ -61,7 +61,7 @@ void	send_message(int pid, char *str)
 				kill(pid, SIGUSR2);
 			else
 				kill(pid, SIGUSR1);
-			if (sleep(2) == 0)
+			if (sleep(10) == 0)
 				exit(ft_printf_colour(RED_BOLD, TIME_OUT));
 		}
 	}
@@ -69,7 +69,7 @@ void	send_message(int pid, char *str)
 	while (i--)
 	{
 		kill(pid, SIGUSR1);
-		if (!sleep(2))
+		if (sleep(10) == 0)
 			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/24 14:48:17 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/28 16:13:38 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ void	add_char_to_str(char c, char **str)
 		size = 0;
 		*str = (char *)malloc(capacity * sizeof(char));
 		if (!(*str))
-			exit(ft_printf("%s", ERR_MALLOC));
+			exit(ft_printf_colour(RED_BOLD, "%s", ERR_MALLOC));
 	}
 	if (size + 2 > capacity)
 	{
 		capacity += BLOCK_SIZE;
 		new_str = (char *)malloc(capacity * sizeof(char));
 		if (!new_str)
-			exit(ft_printf("%s", ERR_MALLOC));
+			exit(ft_printf_colour(RED_BOLD, "%s", ERR_MALLOC));
 		ft_memmove(new_str, *str, size);
 		free(*str);
 		*str = new_str;
@@ -87,9 +87,7 @@ int	main(void)
 	sa.sa_handler = 0;
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = handle_sigusr_server;
-	ft_printf("\033[1;33m");
-	ft_printf("Server PID: %i\n\n", getpid());
-	ft_printf("\033[0m");
+	ft_printf_colour(YELLOW_BOLD, "Server PID: %i\n\n", getpid());
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 	while (1)
