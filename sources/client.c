@@ -6,13 +6,13 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 13:11:48 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:15:43 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-volatile sig_atomic_t	ack_received = 0;
+volatile sig_atomic_t	g_ack_received = 0;
 
 /*Waits for a acknowledgment rom the server before processing the next signal.
 If no acknowledgment has been received after one second, '\1' is sent to the
@@ -24,7 +24,7 @@ void	wait_for_server_ack(int pid)
 	int	i;
 
 	timeout = 0;
-	while (!ack_received)
+	while (!g_ack_received)
 	{
 		usleep(100);
 		if (++timeout > 10000)
@@ -88,7 +88,7 @@ void	send_message(int pid, char *str)
 		c = *str++;
 		while (i--)
 		{
-			ack_received = 0;
+			g_ack_received = 0;
 			if (c >> i & 1)
 				kill(pid, SIGUSR2);
 			else
@@ -99,7 +99,7 @@ void	send_message(int pid, char *str)
 	i = 8;
 	while (i--)
 	{
-		ack_received = 0;
+		g_ack_received = 0;
 		kill(pid, SIGUSR1);
 		wait_for_server_ack(pid);
 	}
@@ -114,7 +114,7 @@ void	handle_sigusr_client(int signum)
 	if (signum == SIGUSR1)
 	{
 		bit_count++;
-		ack_received = 1;
+		g_ack_received = 1;
 	}
 	if (signum == SIGUSR2)
 		ft_printf_colour(GREEN_LIGHT,
