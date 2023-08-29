@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/28 16:07:48 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 11:58:43 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 /*constants*/
 # ifndef BLOCK_SIZE
-#  define BLOCK_SIZE 2048
+#  define BLOCK_SIZE 4096
 # endif
 
 /*colours*/
@@ -40,4 +40,4 @@ typedef enum e_bool
 	TRUE
 }	t_bool;
 
-#endif 
+#endif

@@ -6,11 +6,20 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/28 16:13:38 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:05:40 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+void	free_resources(char **message)
+{
+	if (*message)
+	{
+		free(*message);
+		*message = NULL;
+	}
+}
 
 /*Adds the character 'c' at the end of the string pointed by 'str'. If 'str' is
 not big enough to receive the new character, memory is reallocated to increase
@@ -53,29 +62,35 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 {
 	static int	buffer = 0;
 	static int	bits_received = 0;
-	static int	pid = 0;
 	static char	*message = NULL;
 
 	(void)context;
-	pid = info->si_pid;
 	if (signum == SIGINT && message)
+	{
 		free(message);
+		message = NULL;
+	}
 	buffer = (buffer << 1 | (signum == SIGUSR2));
 	if (++bits_received == 8)
 	{
 		if ((char)buffer != '\0')
 			add_char_to_str((char)buffer, &message);
+		else if ((char)buffer == '\1' && message)
+		{
+			free(message);
+			message = NULL;
+		}
 		else
 		{
 			ft_printf("%s\n", message);
 			free(message);
 			message = NULL;
-			kill(pid, SIGUSR2);
+			kill(info->si_pid, SIGUSR2);
 		}
 		buffer = 0;
 		bits_received = 0;
 	}
-	kill(pid, SIGUSR1);
+	kill(info->si_pid, SIGUSR1);
 }
 
 /*Displays the PID of the server once it is launched and then waits for SIGUSR1

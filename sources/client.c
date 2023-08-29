@@ -6,11 +6,38 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/28 17:09:08 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 12:59:11 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+
+volatile sig_atomic_t	ack_received = 0;
+
+void	wait_for_server_ack(int pid)
+{
+	int	timeout;
+	int	i;
+
+	timeout = 0;
+	while (!ack_received)
+	{
+		usleep(100);
+		if (++timeout > 10000)
+		{
+			i = 0;
+			while (i--)
+			{
+				if ('\1' >> i & 1)
+					kill(pid, SIGUSR2);
+				else
+					kill(pid, SIGUSR1);
+				usleep(100);
+			}
+			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
+		}
+	}
+}
 
 /*Checks that the arguments of the program are valid:
 • Two arguments to the 'client' program
@@ -57,20 +84,20 @@ void	send_message(int pid, char *str)
 		c = *str++;
 		while (i--)
 		{
+			ack_received = 0;
 			if (c >> i & 1)
 				kill(pid, SIGUSR2);
 			else
 				kill(pid, SIGUSR1);
-			if (sleep(10) == 0)
-				exit(ft_printf_colour(RED_BOLD, TIME_OUT));
+			wait_for_server_ack(pid);
 		}
 	}
 	i = 8;
 	while (i--)
 	{
+		ack_received = 0;
 		kill(pid, SIGUSR1);
-		if (sleep(10) == 0)
-			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
+		wait_for_server_ack(pid);
 	}
 }
 
@@ -81,7 +108,10 @@ void	handle_sigusr_client(int signum)
 	static int	bit_count = 0;
 
 	if (signum == SIGUSR1)
+	{
 		bit_count++;
+		ack_received = 1;
+	}
 	if (signum == SIGUSR2)
 		ft_printf_colour(GREEN_LIGHT,
 			"Done, %d characters received by server", bit_count / 8 - 1);
