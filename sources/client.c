@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 13:15:43 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:20:50 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	handle_sigusr_client(int signum)
 	}
 	if (signum == SIGUSR2)
 		ft_printf_colour(GREEN_LIGHT,
-			"Done, %d characters received by server", bit_count / 8 - 1);
+			"Done, %d characters received by server", bit_count / 8);
 }
 
 /*Checks that the program arguments are valids and sends message to the server.
