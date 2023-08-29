@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 13:12:11 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:35:57 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,16 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 	buffer = (buffer << 1 | (signum == SIGUSR2));
 	if (++bits_received == 8)
 	{
-		if ((char)buffer != '\0')
-			add_char_to_str((char)buffer, &message);
-		else if ((char)buffer == '\1')
+		if ((char)buffer == '\1')
 			free_resources(&message);
-		else
+		else if ((char)buffer == '\0')
 		{
 			ft_printf("%s\n", message);
 			free_resources(&message);
 			kill(info->si_pid, SIGUSR2);
 		}
+		else
+			add_char_to_str((char)buffer, &message);
 		buffer = 0;
 		bits_received = 0;
 	}
