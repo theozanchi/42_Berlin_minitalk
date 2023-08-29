@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 12:59:11 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:11:48 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 
 volatile sig_atomic_t	ack_received = 0;
 
+/*Waits for a acknowledgment rom the server before processing the next signal.
+If no acknowledgment has been received after one second, '\1' is sent to the
+server so that server resources are properly freed and the server can receive a
+new message*/
 void	wait_for_server_ack(int pid)
 {
 	int	timeout;
