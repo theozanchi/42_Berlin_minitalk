@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 11:58:43 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 13:58:47 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # define ERR_NON_NUM_PID "Process ID argument is not numeric\n"
 # define ERR_MALLOC "Error while allocating memory for the str_info buffer\n"
 # define TIME_OUT "Timeout: no response from the server, process interrupted\n"
+# define ERR_SIGAC "Sigaction error, process interrupted\n"
+# define PROTECTED_PID "Process ID is protected and should be above 1050\n"
 
 /*constants*/
 # ifndef BLOCK_SIZE

@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 13:20:50 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/29 14:25:51 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,11 @@ t_bool	argument_is_valid(int argc, char **argv)
 			ft_printf_colour(RED_BOLD, ERR_NON_NUM_PID);
 			return (FALSE);
 		}
+	}
+	if (ft_atoi(argv[1]) < 1050)
+	{
+		ft_printf_colour(RED_BOLD, PROTECTED_PID);
+		return (FALSE);
 	}
 	if (!ft_strlen(argv[2]))
 	{
@@ -130,8 +135,12 @@ int	main(int argc, char **argv)
 	if (!argument_is_valid(argc, argv))
 		return (1);
 	sa.sa_handler = handle_sigusr_client;
-	sigaction(SIGUSR1, &sa, NULL);
-	sigaction(SIGUSR2, &sa, NULL);
+	if (sigaction(SIGUSR1, &sa, NULL) == -1
+		|| sigaction(SIGUSR2, &sa, NULL) == -1)
+	{
+		ft_printf(RED_BOLD, ERR_SIGAC);
+		return (1);
+	}
 	send_message(ft_atoi(argv[1]), argv[2]);
 	return (0);
 }
