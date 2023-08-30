@@ -6,7 +6,7 @@
 #    By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/12 10:48:22 by tzanchi           #+#    #+#              #
-#    Updated: 2023/08/23 15:38:25 by tzanchi          ###   ########.fr        #
+#    Updated: 2023/08/30 11:48:34 by tzanchi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,13 +35,16 @@ TICK		=	✓
 
 CLIENT_SRC	=	client.c
 SERVER_SRC	=	server.c
+COMMON_SRC	=	common_utils.c
 
 CLIENT_SRCS	=	$(addprefix ${SRCS_DIR}, ${CLIENT_SRC})
 SERVER_SRCS	=	$(addprefix ${SRCS_DIR}, ${SERVER_SRC})
-SRC_NR		=	$(words ${SRCS})
+COMMON_SRCS	=	$(addprefix ${SRCS_DIR}, ${COMMON_SRC})
+SRC_NR		=	$(shell expr $(words ${CLIENT_SRCS}) + $(words ${SERVER_SRCS}) + $(words ${COMMON_SRCS}))
 
 CLIENT_OBJS	=	$(addprefix ${OBJ_DIR}/, $(notdir $(CLIENT_SRCS:.c=.o)))
 SERVER_OBJS	=	$(addprefix ${OBJ_DIR}/, $(notdir $(SERVER_SRCS:.c=.o)))
+COMMON_OBJS	=	$(addprefix ${OBJ_DIR}/, $(notdir $(COMMON_SRCS:.c=.o)))
 
 all:			project_logo ${OBJ_DIR}
 				@make -s ${LIBFT}
@@ -58,11 +61,11 @@ ${LIBFT}:
 				@echo "${YELLOW}Moving ${LIBFT} at the root of the repository${NC}"
 				@mv ${LIBFT_DIR}/${LIBFT} .
 
-${SERVER}:		entry_message ${SERVER_OBJS}
-				@${CC} ${CFLAGS} ${SERVER_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${SERVER}
+${SERVER}:		entry_message ${SERVER_OBJS} ${COMMON_OBJS}
+				@${CC} ${CFLAGS} ${SERVER_SRCS} ${COMMON_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${SERVER}
 
-${CLIENT}:		${CLIENT_OBJS}
-				@${CC} ${CFLAGS} ${CLIENT_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${CLIENT}
+${CLIENT}:		${CLIENT_OBJS} ${COMMON_OBJS}
+				@${CC} ${CFLAGS} ${CLIENT_SRCS} ${COMMON_SRCS} -I${HEAD_DIR} ${LIBFT} -o ${CLIENT}
 				@echo "${YELLOW}\nCompilation complete, ${CLIENT} and ${SERVER} executable at the root of the directory${NC}\n"
 
 ${OBJ_DIR}:

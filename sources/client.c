@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/30 10:55:05 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 12:02:49 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ void	wait_for_server_ack(int pid)
 			while (i--)
 			{
 				if ('\1' >> i & 1)
-					kill(pid, SIGUSR2);
+					send_signal(pid, SIGUSR2);
 				else
-					kill(pid, SIGUSR1);
+					send_signal(pid, SIGUSR1);
 				usleep(100);
 			}
 			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
@@ -85,9 +85,9 @@ void	send_message(int pid, char *str)
 		{
 			g_ack_received = 0;
 			if (c >> i & 1)
-				kill(pid, SIGUSR2);
+				send_signal(pid, SIGUSR2);
 			else
-				kill(pid, SIGUSR1);
+				send_signal(pid, SIGUSR1);
 			wait_for_server_ack(pid);
 		}
 	}
@@ -95,7 +95,7 @@ void	send_message(int pid, char *str)
 	while (i--)
 	{
 		g_ack_received = 0;
-		kill(pid, SIGUSR1);
+		send_signal(pid, SIGUSR1);
 		wait_for_server_ack(pid);
 	}
 }

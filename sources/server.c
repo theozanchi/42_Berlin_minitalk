@@ -6,20 +6,21 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 14:28:10 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 11:47:40 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
 /*Checks that the message buffer can be freed, frees it and sets it to NULL*/
-void	free_resources(char **message)
+int	free_resources(char **message)
 {
 	if (*message)
 	{
 		free(*message);
 		*message = NULL;
 	}
+	return (0);
 }
 
 /*Adds the character 'c' at the end of the string pointed by 'str'. If 'str' is
@@ -67,7 +68,7 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 
 	(void)context;
 	if (signum == SIGINT)
-		free_resources(&message);
+		exit(free_resources(&message));
 	buffer = (buffer << 1 | (signum == SIGUSR2));
 	if (++bits_received == 8)
 	{
@@ -77,14 +78,14 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 		{
 			ft_printf("%s\n", message);
 			free_resources(&message);
-			kill(info->si_pid, SIGUSR2);
+			send_signal(info->si_pid, SIGUSR2);
 		}
 		else
 			add_char_to_str((char)buffer, &message);
 		buffer = 0;
 		bits_received = 0;
 	}
-	kill(info->si_pid, SIGUSR1);
+	send_signal(info->si_pid, SIGUSR1);
 }
 
 /*Displays the PID of the server once it is launched and then waits for SIGUSR1
@@ -97,7 +98,8 @@ int	main(void)
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = handle_sigusr_server;
 	ft_printf_colour(YELLOW_BOLD, "Server PID: %i\n\n", getpid());
-	if (sigaction(SIGUSR1, &sa, NULL) == -1
+	if (sigaction(SIGINT, &sa, NULL) == -1
+		|| sigaction(SIGUSR1, &sa, NULL) == -1
 		|| sigaction(SIGUSR2, &sa, NULL) == -1)
 	{
 		ft_printf(RED_BOLD, ERR_SIGAC);

@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 13:58:47 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 11:42:49 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../libft/libft.h"
 # include <signal.h>
+# include <errno.h>
 
 /*errors*/
 # define ERR_ARG_NR "Wrong number of arguments\n"
@@ -24,6 +25,7 @@
 # define TIME_OUT "Timeout: no response from the server, process interrupted\n"
 # define ERR_SIGAC "Sigaction error, process interrupted\n"
 # define PROTECTED_PID "Process ID is protected and should be above 1050\n"
+# define KILL_FAIL "Error sanding signal, process interrupted with errno %d\n"
 
 /*constants*/
 # ifndef BLOCK_SIZE
@@ -41,5 +43,8 @@ typedef enum e_bool
 	FALSE,
 	TRUE
 }	t_bool;
+
+/*common_utils*/
+void	send_signal(pid_t pid, int signum);
 
 #endif
