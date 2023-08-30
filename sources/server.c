@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/30 15:00:37 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 15:43:26 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ int	main(void)
 	sa.sa_handler = 0;
 	sa.sa_flags = SA_SIGINFO;
 	sa.sa_sigaction = handle_sigusr_server;
+	sigemptyset(&sa.sa_mask);
 	ft_printf_colour(YELLOW_BOLD, "Server PID: %i\n\n", getpid());
 	if (sigaction(SIGINT, &sa, NULL) == -1
 		|| sigaction(SIGUSR1, &sa, NULL) == -1
