@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/30 12:02:49 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 15:20:13 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ volatile sig_atomic_t	g_ack_received = 0;
 If no acknowledgment has been received after one second, '\1' is sent to the
 server so that server resources are properly freed and the server can receive a
 new message*/
-void	wait_for_server_ack(int pid)
+void	wait_for_server_ack(int pid, int delay)
 {
 	int	timeout;
 	int	i;
@@ -26,8 +26,8 @@ void	wait_for_server_ack(int pid)
 	timeout = 0;
 	while (!g_ack_received)
 	{
-		usleep(100);
-		if (++timeout > 10000)
+		usleep(delay);
+		if (++timeout > 10 * delay)
 		{
 			i = 0;
 			while (i--)
@@ -36,7 +36,7 @@ void	wait_for_server_ack(int pid)
 					send_signal(pid, SIGUSR2);
 				else
 					send_signal(pid, SIGUSR1);
-				usleep(100);
+				usleep(delay);
 			}
 			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
 		}
@@ -88,7 +88,7 @@ void	send_message(int pid, char *str)
 				send_signal(pid, SIGUSR2);
 			else
 				send_signal(pid, SIGUSR1);
-			wait_for_server_ack(pid);
+			wait_for_server_ack(pid, 500);
 		}
 	}
 	i = 8;
@@ -96,7 +96,7 @@ void	send_message(int pid, char *str)
 	{
 		g_ack_received = 0;
 		send_signal(pid, SIGUSR1);
-		wait_for_server_ack(pid);
+		wait_for_server_ack(pid, 500);
 	}
 }
 

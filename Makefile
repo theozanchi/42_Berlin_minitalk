@@ -6,13 +6,13 @@
 #    By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/12 10:48:22 by tzanchi           #+#    #+#              #
-#    Updated: 2023/08/30 11:48:34 by tzanchi          ###   ########.fr        #
+#    Updated: 2023/08/30 14:55:46 by tzanchi          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 #Compiler targets and libraries
 CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS		=	-Wall -Wextra -Werror -g #-fsanitize=address
 CLIENT		=	client
 SERVER		=	server
 LIBFT		=	libft.a
