@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/29 14:25:51 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/08/30 10:55:05 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,33 +46,23 @@ void	wait_for_server_ack(int pid)
 /*Checks that the arguments of the program are valid:
 • Two arguments to the 'client' program
 • First argument is numeric (PID of the 'server')
+• First argument is not a protected process (PID < 1050)
 • Second argument is a not empty string*/
 t_bool	argument_is_valid(int argc, char **argv)
 {
-	int	i;
+	const char	*error_msg = NULL;
 
 	if (argc != 3)
+		error_msg = ERR_ARG_NR;
+	else if (!ft_isnumeric(argv[1]))
+		error_msg = ERR_NON_NUM_PID;
+	else if (ft_atoi(argv[1]) < 1050)
+		error_msg = PROTECTED_PID;
+	else if (!ft_strlen(argv[2]))
+		error_msg = ERR_EMPT_STR;
+	if (error_msg)
 	{
-		ft_printf_colour(RED_BOLD, ERR_ARG_NR);
-		return (FALSE);
-	}
-	i = 0;
-	while (argv[1][i])
-	{
-		if (!ft_isdigit(argv[1][i++]))
-		{
-			ft_printf_colour(RED_BOLD, ERR_NON_NUM_PID);
-			return (FALSE);
-		}
-	}
-	if (ft_atoi(argv[1]) < 1050)
-	{
-		ft_printf_colour(RED_BOLD, PROTECTED_PID);
-		return (FALSE);
-	}
-	if (!ft_strlen(argv[2]))
-	{
-		ft_printf_colour(RED_BOLD, ERR_EMPT_STR);
+		ft_printf_colour(RED_BOLD, error_msg);
 		return (FALSE);
 	}
 	return (TRUE);
