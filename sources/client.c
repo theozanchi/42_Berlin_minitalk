@@ -6,42 +6,11 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/30 15:42:29 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 10:51:54 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
-
-volatile sig_atomic_t	g_ack_received = 0;
-
-/*Waits for a acknowledgment rom the server before processing the next signal.
-If no acknowledgment has been received after one second, '\1' is sent to the
-server so that server resources are properly freed and the server can receive a
-new message*/
-void	wait_for_server_ack(int pid, int delay)
-{
-	int	timeout;
-	int	i;
-
-	timeout = 0;
-	while (!g_ack_received)
-	{
-		usleep(delay);
-		if (++timeout > 10 * delay)
-		{
-			i = 0;
-			while (i--)
-			{
-				if ('\1' >> i & 1)
-					send_signal(pid, SIGUSR2);
-				else
-					send_signal(pid, SIGUSR1);
-				usleep(delay);
-			}
-			exit(ft_printf_colour(RED_BOLD, TIME_OUT));
-		}
-	}
-}
 
 /*Checks that the arguments of the program are valid:
 • Two arguments to the 'client' program
@@ -83,20 +52,20 @@ void	send_message(int pid, char *str)
 		c = *str++;
 		while (i--)
 		{
-			g_ack_received = 0;
 			if (c >> i & 1)
 				send_signal(pid, SIGUSR2);
 			else
 				send_signal(pid, SIGUSR1);
-			wait_for_server_ack(pid, 500);
+			usleep(80);
+			//pause();
 		}
 	}
 	i = 8;
 	while (i--)
 	{
-		g_ack_received = 0;
 		send_signal(pid, SIGUSR1);
-		wait_for_server_ack(pid, 500);
+		usleep(80);
+		//pause();
 	}
 }
 
@@ -104,16 +73,15 @@ void	send_message(int pid, char *str)
 receive the message properly*/
 void	handle_sigusr_client(int signum)
 {
-	static int	bit_count = 0;
+	//static int	bit_count = 0;
 
-	if (signum == SIGUSR1)
-	{
-		bit_count++;
-		g_ack_received = 1;
-	}
+	//if (signum == SIGUSR1)
+	//	bit_count++;
 	if (signum == SIGUSR2)
-		ft_printf_colour(GREEN_LIGHT,
-			"Done, %d characters received by server", bit_count / 8);
+	{
+		ft_printf_colour(GREEN_LIGHT, "Done, connection closed");
+		exit(EXIT_SUCCESS);
+	}
 }
 
 /*Checks that the program arguments are valids and sends message to the server.
@@ -126,12 +94,12 @@ int	main(int argc, char **argv)
 		return (1);
 	sa.sa_handler = handle_sigusr_client;
 	sigemptyset(&sa.sa_mask);
-	if (sigaction(SIGUSR1, &sa, NULL) == -1
-		|| sigaction(SIGUSR2, &sa, NULL) == -1)
+	if (sigaction(SIGUSR2, &sa, NULL) == -1)
 	{
 		ft_printf(RED_BOLD, ERR_SIGAC);
 		return (1);
 	}
 	send_message(ft_atoi(argv[1]), argv[2]);
+	pause();
 	return (0);
 }
