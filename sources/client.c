@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/09/04 11:02:36 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 11:12:14 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_bool	argument_is_valid(int argc, char **argv)
 represent 0 and SIGUSR2 to represent 1
 Once the message is sent, 11111111 (bit representation of the NULL terminator) is
 sent to the server to indicate message is over*/
-void	send_message(int pid, char *str)
+void	send_message(int pid, char *str, t_type type)
 {
 	int		i;
 	char	c;
@@ -59,11 +59,26 @@ void	send_message(int pid, char *str)
 			pause();
 		}
 	}
-	i = 8;
-	while (i--)
+	if (type == MESSAGE)
 	{
-		send_signal(pid, SIGUSR1);
-		pause();
+		i = 8;
+		while (i--)
+		{
+			send_signal(pid, SIGUSR1);
+			pause();
+		}
+	}
+	else
+	{
+		i = 8;
+		while (i--)
+		{
+			if ('\1' >> i & 1)
+				send_signal(pid, SIGUSR2);
+			else
+				send_signal(pid, SIGUSR1);
+			pause();
+		}
 	}
 }
 
@@ -87,6 +102,8 @@ Expects a signal from the server once the message has been received*/
 int	main(int argc, char **argv)
 {
 	struct sigaction	sa;
+	char				*message_length;
+	int					pid;
 
 	if (!argument_is_valid(argc, argv))
 		return (1);
@@ -97,7 +114,11 @@ int	main(int argc, char **argv)
 		ft_printf(RED_BOLD, ERR_SIGAC);
 		return (1);
 	}
-	send_message(ft_atoi(argv[1]), argv[2]);
+	message_length = ft_itoa(ft_strlen(argv[2]));
+	pid = ft_atoi(argv[1]);
+	send_message(pid, message_length, MESSAGE_LENGTH);
+	free(message_length);
+	send_message(pid, argv[2], MESSAGE);
 	pause();
 	return (0);
 }

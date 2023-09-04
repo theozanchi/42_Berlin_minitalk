@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/09/04 11:03:31 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 11:19:59 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,28 +29,8 @@ the capacity of 'str' by BLOCK_SIZE
 add_char_to_str ensures that 'str' is NULL terminated*/
 void	add_char_to_str(char c, char **str)
 {
-	static int	capacity = BLOCK_SIZE;
 	static int	size = 0;
-	char		*new_str;
 
-	if (!(*str))
-	{
-		capacity = BLOCK_SIZE;
-		size = 0;
-		*str = (char *)malloc(capacity * sizeof(char));
-		if (!(*str))
-			exit(ft_printf_colour(RED_BOLD, "%s", ERR_MALLOC));
-	}
-	if (size + 2 > capacity)
-	{
-		capacity += BLOCK_SIZE;
-		new_str = (char *)malloc(capacity * sizeof(char));
-		if (!new_str)
-			exit(ft_printf_colour(RED_BOLD, "%s", ERR_MALLOC));
-		ft_memmove(new_str, *str, size);
-		free(*str);
-		*str = new_str;
-	}
 	(*str)[size] = c;
 	(*str)[++size] = '\0';
 }
@@ -66,11 +46,18 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 	static int	bits_received = 0;
 	static char	*message = NULL;
 	int			flag;
+	int			message_length;
 
 	(void)context;
 	if (signum == SIGINT)
 		exit(free_resources(&message));
 	buffer = (buffer << 1 | (signum == SIGUSR2));
+	if (!message)
+	{
+		message = malloc(BLOCK_SIZE * sizeof(char));
+		if (!message)
+			exit(ft_printf_colour(RED_BOLD, "%s", ERR_MALLOC));
+	}
 	flag = 0;
 	if (++bits_received == 8)
 	{
@@ -80,6 +67,12 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 			free_resources(&message);
 			send_signal(info->si_pid, SIGUSR2);
 			flag = 1;
+		}
+		else if ((char)buffer == '\1')
+		{
+			message_length = ft_atoi(message);
+			free(message);
+			message = malloc((message_length + 1) * sizeof(char));
 		}
 		else
 			add_char_to_str((char)buffer, &message);

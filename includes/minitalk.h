@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:45:05 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/08/30 15:21:03 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 11:14:53 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 
 /*constants*/
 # ifndef BLOCK_SIZE
-#  define BLOCK_SIZE 4096
+#  define BLOCK_SIZE 64
 # endif
 
 /*colours*/
@@ -43,6 +43,12 @@ typedef enum e_bool
 	FALSE,
 	TRUE
 }	t_bool;
+
+typedef enum e_type
+{
+	MESSAGE_LENGTH,
+	MESSAGE
+}	t_type;
 
 /*common_utils*/
 void	send_signal(pid_t pid, int signum);
