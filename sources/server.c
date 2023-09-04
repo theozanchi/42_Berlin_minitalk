@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:26 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/09/04 10:58:17 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 11:03:31 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,13 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 	static int	buffer = 0;
 	static int	bits_received = 0;
 	static char	*message = NULL;
-	//int			flag = 0;
+	int			flag;
 
 	(void)context;
 	if (signum == SIGINT)
 		exit(free_resources(&message));
 	buffer = (buffer << 1 | (signum == SIGUSR2));
+	flag = 0;
 	if (++bits_received == 8)
 	{
 		if ((char)buffer == '\0')
@@ -78,15 +79,15 @@ void	handle_sigusr_server(int signum, siginfo_t *info, void *context)
 			ft_printf("%s\n", message);
 			free_resources(&message);
 			send_signal(info->si_pid, SIGUSR2);
-			//flag = 1;
+			flag = 1;
 		}
 		else
 			add_char_to_str((char)buffer, &message);
 		buffer = 0;
 		bits_received = 0;
 	}
-	//if (!flag)
-	//	send_signal(info->si_pid, SIGUSR1);
+	if (!flag)
+		send_signal(info->si_pid, SIGUSR1);
 }
 
 /*Displays the PID of the server once it is launched and then waits for SIGUSR1

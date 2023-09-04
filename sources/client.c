@@ -6,7 +6,7 @@
 /*   By: tzanchi <tzanchi@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 17:44:16 by tzanchi           #+#    #+#             */
-/*   Updated: 2023/09/04 10:51:54 by tzanchi          ###   ########.fr       */
+/*   Updated: 2023/09/04 11:02:36 by tzanchi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,14 @@ void	send_message(int pid, char *str)
 				send_signal(pid, SIGUSR2);
 			else
 				send_signal(pid, SIGUSR1);
-			usleep(80);
-			//pause();
+			pause();
 		}
 	}
 	i = 8;
 	while (i--)
 	{
 		send_signal(pid, SIGUSR1);
-		usleep(80);
-		//pause();
+		pause();
 	}
 }
 
@@ -73,10 +71,10 @@ void	send_message(int pid, char *str)
 receive the message properly*/
 void	handle_sigusr_client(int signum)
 {
-	//static int	bit_count = 0;
+	static int	bit_count = 0;
 
-	//if (signum == SIGUSR1)
-	//	bit_count++;
+	if (signum == SIGUSR1)
+		bit_count++;
 	if (signum == SIGUSR2)
 	{
 		ft_printf_colour(GREEN_LIGHT, "Done, connection closed");
